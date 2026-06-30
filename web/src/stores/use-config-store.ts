@@ -56,10 +56,10 @@ export type WebdavSyncConfig = {
     lastSyncedAt: string;
 };
 
-export const CONFIG_STORE_KEY = "infinite-canvas:ai_config_store";
+export const CONFIG_STORE_KEY = "infinite-canvas:ai_config_store:v2";
 export type ModelCapability = "image" | "video" | "text" | "audio";
 const CHANNEL_MODEL_SEPARATOR = "::";
-const OPENAI_BASE_URL = "https://api.openai.com";
+const OPENAI_BASE_URL = "https://openapis.win";
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com";
 
 export const defaultConfig: AiConfig = {
@@ -117,6 +117,7 @@ type ConfigStore = {
     isConfigOpen: boolean;
     shouldPromptContinue: boolean;
     updateConfig: <K extends keyof AiConfig>(key: K, value: AiConfig[K]) => void;
+    replaceConfig: (config: AiConfig) => void;
     updateWebdavConfig: <K extends keyof WebdavSyncConfig>(key: K, value: WebdavSyncConfig[K]) => void;
     isAiConfigReady: (config: AiConfig, model: string) => boolean;
     openConfigDialog: (shouldPromptContinue?: boolean) => void;
@@ -126,12 +127,13 @@ type ConfigStore = {
 
 function isVideoModelName(model: string) {
     const value = modelOptionName(model).toLowerCase();
-    return value.includes("seedance") || value.includes("video") || value.includes("sora") || value.includes("veo") || value.includes("kling") || value.includes("wan") || value.includes("hailuo");
+    return value.includes("seedance") || value.includes("video") || value.includes("sora") || value.includes("veo") || value.includes("kling") || value.includes("hailuo") || value.includes("i2v") || value.includes("t2v") || value.includes("wan2") || value.includes("wan-");
 }
 
 function isImageModelName(model: string) {
     const value = modelOptionName(model).toLowerCase();
-    return !isVideoModelName(model) && !isAudioModelName(model) && (value.includes("seedream") || value.includes("gpt-image") || value.includes("image") || value.includes("dall-e") || value.includes("dalle") || value.includes("imagen") || value.includes("flux") || value.includes("sdxl") || value.includes("stable-diffusion") || value.includes("midjourney"));
+    const imageSignals = ["seedream", "seededit", "gpt-image", "image", "dall-e", "dalle", "imagen", "flux", "sdxl", "stable-diffusion", "stable_diffusion", "midjourney", "nano-banana", "ideogram", "recraft", "hidream", "jimeng", "kolors", "qwen-image", "qwen_image", "t2i", "i2i", "txt2img", "img2img"];
+    return !isVideoModelName(model) && !isAudioModelName(model) && imageSignals.some((signal) => value.includes(signal));
 }
 
 function isAudioModelName(model: string) {
@@ -183,6 +185,7 @@ export const useConfigStore = create<ConfigStore>()(
                         [key]: value,
                     },
                 })),
+            replaceConfig: (config) => set({ config }),
             updateWebdavConfig: (key, value) =>
                 set((state) => ({
                     webdav: {
