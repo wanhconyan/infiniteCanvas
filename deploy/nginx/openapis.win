@@ -35,7 +35,8 @@ server {
         if ($request_method = OPTIONS) {
             add_header Access-Control-Allow-Origin "https://image.openapis.win" always;
             add_header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS" always;
-            add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin, X-Requested-With" always;
+            add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin, X-Requested-With, X-API-Key" always;
+            add_header Access-Control-Allow-Credentials "true" always;
             add_header Access-Control-Max-Age 86400 always;
             add_header Content-Length 0;
             add_header Content-Type text/plain;
@@ -48,9 +49,17 @@ server {
         proxy_read_timeout 3600s;
         proxy_send_timeout 3600s;
 
+        proxy_hide_header Access-Control-Allow-Origin;
+        proxy_hide_header Access-Control-Allow-Methods;
+        proxy_hide_header Access-Control-Allow-Headers;
+        proxy_hide_header Access-Control-Allow-Credentials;
+        proxy_hide_header Access-Control-Expose-Headers;
+        proxy_hide_header Access-Control-Max-Age;
+
         add_header Access-Control-Allow-Origin "https://image.openapis.win" always;
         add_header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS" always;
-        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin, X-Requested-With" always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Origin, X-Requested-With, X-API-Key" always;
+        add_header Access-Control-Allow-Credentials "true" always;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
