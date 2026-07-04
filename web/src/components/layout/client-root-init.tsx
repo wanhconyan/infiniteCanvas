@@ -7,7 +7,7 @@ import { App } from "antd";
 import { fetchChannelModels } from "@/services/api/image";
 import { createModelChannel, filterModelsByCapability, modelOptionsFromChannels, normalizeModelOptionValue, useConfigStore, type AiConfig, type ModelChannel } from "@/stores/use-config-store";
 
-const SUB2API_PARENT_ORIGIN = "https://openapis.win";
+const FALLBACK_SUB2API_PARENT_ORIGIN = "https://openapis.win";
 const SUB2API_CHANNEL_ID = "sub2api";
 const CANVAS_CONFIG_MESSAGE = "sub2api:infinite-canvas-config";
 const CANVAS_READY_MESSAGE = "sub2api:infinite-canvas-ready";
@@ -44,7 +44,7 @@ export function ClientRootInit({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         function handleMessage(event: MessageEvent) {
-            if (event.origin !== SUB2API_PARENT_ORIGIN) return;
+            if (event.origin !== getSub2apiParentOrigin()) return;
             const data = event.data as { type?: string; payload?: { baseUrl?: unknown; apiKey?: unknown } };
             if (data?.type !== CANVAS_CONFIG_MESSAGE) return;
             const baseUrl = typeof data.payload?.baseUrl === "string" ? data.payload.baseUrl.trim() : "";
@@ -69,7 +69,7 @@ export function ClientRootInit({ children }: { children: ReactNode }) {
         if (window.parent === window) return;
 
         const postReady = () => {
-            window.parent.postMessage({ type: CANVAS_READY_MESSAGE }, SUB2API_PARENT_ORIGIN);
+            window.parent.postMessage({ type: CANVAS_READY_MESSAGE }, getSub2apiParentOrigin());
         };
 
         const stopAt = Date.now() + READY_POST_DURATION_MS;
@@ -110,6 +110,17 @@ export function ClientRootInit({ children }: { children: ReactNode }) {
     }, [message, openConfigDialog, replaceConfig, setConfigDialogOpen]);
 
     return <>{children}</>;
+}
+
+function getSub2apiParentOrigin() {
+    if (typeof document !== "undefined" && document.referrer) {
+        try {
+            return new URL(document.referrer).origin;
+        } catch {
+            // Fall through to the historical hosted origin.
+        }
+    }
+    return FALLBACK_SUB2API_PARENT_ORIGIN;
 }
 
 function acknowledgeConfigMessage(event: MessageEvent) {
