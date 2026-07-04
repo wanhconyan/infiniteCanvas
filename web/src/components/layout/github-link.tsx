@@ -7,20 +7,26 @@ import { cn } from "@/lib/utils";
 type GitHubLinkProps = {
     className?: string;
     style?: React.CSSProperties;
+    disabled?: boolean;
 };
 
-export function GitHubLink({ className, style }: GitHubLinkProps) {
+export function GitHubLink({ className, style, disabled = false }: GitHubLinkProps) {
     return (
-        <a
-            className={cn("inline-flex size-9 shrink-0 items-center justify-center rounded-full text-stone-600 transition hover:bg-stone-100 hover:text-stone-950 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-white", className)}
+        <button
+            type="button"
+            disabled={disabled}
+            className={cn(
+                "inline-flex size-9 shrink-0 items-center justify-center rounded-full",
+                disabled
+                    ? "cursor-default text-stone-400 dark:text-stone-500"
+                    : "text-stone-600 transition hover:bg-stone-100 hover:text-stone-950 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-white",
+                className,
+            )}
             style={style}
-            href="https://github.com/basketikun/infinite-canvas"
-            target="_blank"
-            rel="noreferrer"
             aria-label="GitHub"
             title="GitHub"
         >
             <GithubOutlined className="text-base" />
-        </a>
+        </button>
     );
 }
