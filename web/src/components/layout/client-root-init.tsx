@@ -1,11 +1,9 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { App } from "antd";
 
 import { fetchChannelModels } from "@/services/api/image";
-import { createModelChannel, filterModelsByCapability, modelOptionsFromChannels, normalizeModelOptionValue, useConfigStore, type AiConfig, type ModelChannel } from "@/stores/use-config-store";
+import { createModelChannel, modelOptionsFromChannels, normalizeModelOptionValue, selectableModelsByCapability, useConfigStore, type AiConfig, type ModelChannel } from "@/stores/use-config-store";
 
 const FALLBACK_SUB2API_PARENT_ORIGIN = "https://openapis.win";
 const SUB2API_CHANNEL_ID = "sub2api";
@@ -153,21 +151,16 @@ function withSub2apiChannel(config: AiConfig, baseUrl: string, apiKey: string, m
 
 function withChannels(config: AiConfig, channels: ModelChannel[]): AiConfig {
     const models = modelOptionsFromChannels(channels);
-    const imageModels = filterModelsByCapability(models, "image");
-    const videoModels = filterModelsByCapability(models, "video");
-    const textModels = filterModelsByCapability(models, "text");
-    const audioModels = filterModelsByCapability(models, "audio");
+    const nextConfig = { ...config, channels, models };
+    const imageModels = selectableModelsByCapability(nextConfig, "image");
+    const videoModels = selectableModelsByCapability(nextConfig, "video");
+    const textModels = selectableModelsByCapability(nextConfig, "text");
+    const audioModels = selectableModelsByCapability(nextConfig, "audio");
     const imageModel = normalizeDefaultModel(normalizeModelOptionValue(config.imageModel || config.model, channels), imageModels);
 
     return {
-        ...config,
-        channels,
-        models,
-        imageModels,
-        videoModels,
-        textModels,
-        audioModels,
-        model: normalizeDefaultModel(normalizeModelOptionValue(config.model || imageModel, channels), imageModels),
+        ...nextConfig,
+        model: normalizeDefaultModel(normalizeModelOptionValue(config.model || imageModel, channels), models),
         imageModel,
         videoModel: normalizeDefaultModel(normalizeModelOptionValue(config.videoModel, channels), videoModels),
         textModel: normalizeDefaultModel(normalizeModelOptionValue(config.textModel, channels), textModels),
