@@ -1,5 +1,16 @@
 # 无限画布文档索引
 
+## 代码知识库
+
+- [代码知识库总索引](codebase/index.md)
+- [整体架构](codebase/architecture.md)
+- [Web 应用与页面](codebase/web-app.md)
+- [画布领域](codebase/canvas.md)
+- [AI 请求层](codebase/ai-generation.md)
+- [存储与同步](codebase/storage-sync.md)
+- [Canvas Agent](codebase/canvas-agent.md)
+- [文档、插件与部署](codebase/docs-plugin-deploy.md)
+
 ## 项目介绍
 
 - [快速开始](/docs/overview/quick-start)

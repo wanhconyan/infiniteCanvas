@@ -56,6 +56,8 @@
 
 ## 文档规范
 
+- 理解或定位代码时，先读 `docs/codebase/index.md`，再读对应模块知识库；只有确认具体实现时才继续读取相关源码，不要默认重复通读仓库。
+- 架构、模块入口、核心数据结构或关键调用链发生变化时，同步更新 `docs/codebase/` 对应文档和索引。
 - README 保持简洁，只放项目介绍、核心功能、快速开始和文档入口。
 - `docs/index.md` 放给 AI 使用的文档索引，不要再放到 `docs/content/docs/` 内容目录里。
 - 详细功能介绍写到 `docs/content/docs/overview/features.mdx`。
